@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 
+export const dynamic = 'force-static';
+
 interface RSSItem {
   'media:thumbnail'?: string;
   description?: string;
