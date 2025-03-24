@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 
+interface RSSItem {
+  'media:thumbnail'?: string;
+  description?: string;
+  link: string;
+  title: string;
+  pubDate: string;
+}
+
 export async function GET() {
   try {
     const response = await fetch('https://note.com/tamo2918/rss', {
@@ -22,7 +30,7 @@ export async function GET() {
     const items = result.rss.channel.item;
     
     // 必要なデータを抽出して整形
-    const posts = items.slice(0, 3).map((item: any) => {
+    const posts = items.slice(0, 3).map((item: RSSItem) => {
       // media:thumbnailから画像URLを取得
       let imageUrl = '';
       if (item['media:thumbnail']) {

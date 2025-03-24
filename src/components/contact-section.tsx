@@ -70,7 +70,7 @@ export function ContactSection() {
     try {
       setIsSubmitting(true);
       
-      const response = await axios.post('/api/contact', formData);
+      await axios.post('/api/contact', formData);
       
       // 送信成功時
       toast.success("送信完了", {

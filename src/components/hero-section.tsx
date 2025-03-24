@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import Typewriter from 'typewriter-effect';
-import { useRef, useEffect } from "react";
 
 export function HeroSection() {
   return (

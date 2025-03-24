@@ -135,57 +135,63 @@ export function BlogSection() {
           </div>
         )}
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          variants={container}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          {posts.map((post) => (
-            <motion.div key={post.id} variants={item}>
-              <Card className="h-full flex flex-col backdrop-blur-sm bg-card/80 border-border/50 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
-                <div className="relative w-full aspect-video overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-70"></div>
-                  {post.thumbnailUrl ? (
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={post.thumbnailUrl}
-                        alt={post.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center">
-                      <span className="text-4xl">📝</span>
-                    </div>
-                  )}
-                </div>
-                <CardHeader>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {formatDate(post.publishedAt)}
+        {isLoading ? (
+          <div className="text-center text-muted-foreground">
+            <p>記事を読み込み中...</p>
+          </div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={container}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            {posts.map((post) => (
+              <motion.div key={post.id} variants={item}>
+                <Card className="h-full flex flex-col backdrop-blur-sm bg-card/80 border-border/50 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <div className="relative w-full aspect-video overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-70"></div>
+                    {post.thumbnailUrl ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={post.thumbnailUrl}
+                          alt={post.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <span className="text-4xl">📝</span>
+                      </div>
+                    )}
                   </div>
-                  <CardTitle className="line-clamp-2 text-xl group-hover:text-primary transition-colors duration-200">
-                    {post.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-muted-foreground text-sm line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="default" size="sm" className="w-full" asChild>
-                    <a href={post.url} target="_blank" rel="noopener noreferrer">
-                      記事を読む
-                    </a>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+                  <CardHeader>
+                    <div className="text-sm text-muted-foreground mb-2">
+                      {formatDate(post.publishedAt)}
+                    </div>
+                    <CardTitle className="line-clamp-2 text-xl group-hover:text-primary transition-colors duration-200">
+                      {post.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <p className="text-muted-foreground text-sm line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="default" size="sm" className="w-full" asChild>
+                      <a href={post.url} target="_blank" rel="noopener noreferrer">
+                        記事を読む
+                      </a>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
         <motion.div 
           className="mt-12 text-center"
