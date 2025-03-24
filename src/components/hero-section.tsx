@@ -81,7 +81,7 @@ export function HeroSection() {
                 onInit={(typewriter) => {
                   typewriter
                     .changeDelay(15)
-                    .typeString("Hi, I'm Tatsuki Morita👋")
+                    .typeString("Hi, I'm Tatsuki Morita")
                     .pauseFor(200)
                     .typeString("<br />Let's turn ideas into reality:)")
                     .start();
