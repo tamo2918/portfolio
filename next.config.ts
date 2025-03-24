@@ -2,8 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/portfolio' : '',
   images: {
     domains: ['assets.st-note.com'],
     remotePatterns: [
