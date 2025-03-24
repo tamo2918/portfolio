@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 
 export const dynamic = 'force-static';
+export const revalidate = 3600; // 1時間ごとに再検証
 
 interface RSSItem {
   'media:thumbnail'?: string;
