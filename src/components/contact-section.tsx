@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
 import { toast } from "sonner";
 import axios from "axios";
 
