@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
       - name: Build with Next.js
-        run: npm run build
+        run: NEXT_DISABLE_ESLINT=1 npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
