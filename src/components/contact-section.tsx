@@ -1,10 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Button } from "./ui/button";
-import { toast } from "sonner";
-import axios from "axios";
 
 const socialLinks = [
   {
@@ -24,74 +22,14 @@ const socialLinks = [
   },
 ];
 
-// フォームの型定義
-interface FormData {
-  name: string;
-  email: string;
-  message: string;
-}
-
 export function ContactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
-  // フォームの状態
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    message: ""
-  });
-  
-  // 送信中の状態
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // フォーム入力の変更ハンドラ
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  // フォーム送信ハンドラ
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // バリデーション
-    if (!formData.name || !formData.email || !formData.message) {
-      toast.error("入力エラー", {
-        description: "すべての項目を入力してください"
-      });
-      return;
-    }
-    
-    try {
-      setIsSubmitting(true);
-      
-      await axios.post('/api/contact', formData);
-      
-      // 送信成功時
-      toast.success("送信完了", {
-        description: "メッセージが送信されました。ありがとうございます！"
-      });
-      
-      // フォームをリセット
-      setFormData({
-        name: "",
-        email: "",
-        message: ""
-      });
-      
-    } catch (error) {
-      // 送信失敗時
-      toast.error("送信エラー", {
-        description: "メッセージの送信に失敗しました。後ほど再度お試しください。"
-      });
-      console.error('Error sending message:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleContactClick = () => {
+    const subject = encodeURIComponent('ポートフォリオサイトからのお問い合わせ');
+    const body = encodeURIComponent('お問い合わせ内容をご記入ください。\n\n');
+    window.location.href = `mailto:mrt.t0304@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -112,7 +50,7 @@ export function ContactSection() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">お問い合わせ</h2>
           <div className="h-1 w-20 bg-primary mx-auto rounded-full"></div>
           <p className="mt-6 text-muted-foreground max-w-2xl mx-auto">
-            ご質問やプロジェクトのご依頼、その他のお問い合わせは下記のフォームからお気軽にご連絡ください。
+            ご質問やプロジェクトのご依頼、その他のお問い合わせはお気軽にご連絡ください。
           </p>
         </motion.div>
 
@@ -219,23 +157,6 @@ export function ContactSection() {
                               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                             </svg>
                           )}
-                          {link.icon === "linkedin" && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                              <rect x="2" y="9" width="4" height="12"></rect>
-                              <circle cx="4" cy="4" r="2"></circle>
-                            </svg>
-                          )}
                           {link.icon === "instagram" && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -259,60 +180,38 @@ export function ContactSection() {
                   </div>
                 </div>
 
-                <div className="p-1">
-                  <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1px] rounded-lg">
-                    <div className="bg-card rounded-lg p-6">
-                      <form className="space-y-4" onSubmit={handleSubmit}>
-                        <div>
-                          <label htmlFor="name" className="block text-sm font-medium mb-1">
-                            お名前
-                          </label>
-                          <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="w-full rounded-md border-border/50 bg-muted/50 px-4 py-2 text-sm focus:border-primary focus:ring-primary"
-                            placeholder="山田 太郎"
-                          />
+                <div className="p-1 flex items-center justify-center">
+                  <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[1px] rounded-lg w-full">
+                    <div className="bg-card rounded-lg p-8 flex flex-col items-center text-center">
+                      <div className="mb-6">
+                        <div className="bg-primary/10 p-4 rounded-full mx-auto">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-primary"
+                          >
+                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                          </svg>
                         </div>
-                        <div>
-                          <label htmlFor="email" className="block text-sm font-medium mb-1">
-                            メールアドレス
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="w-full rounded-md border-border/50 bg-muted/50 px-4 py-2 text-sm focus:border-primary focus:ring-primary"
-                            placeholder="your@email.com"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="message" className="block text-sm font-medium mb-1">
-                            メッセージ
-                          </label>
-                          <textarea
-                            id="message"
-                            name="message"
-                            value={formData.message}
-                            onChange={handleChange}
-                            rows={4}
-                            className="w-full rounded-md border-border/50 bg-muted/50 px-4 py-2 text-sm focus:border-primary focus:ring-primary"
-                            placeholder="ご質問やご依頼内容をご記入ください"
-                          ></textarea>
-                        </div>
-                        <Button 
-                          type="submit" 
-                          className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? "送信中..." : "送信する"}
-                        </Button>
-                      </form>
+                      </div>
+                      <h3 className="text-xl font-bold mb-3">メールでのお問い合わせ</h3>
+                      <p className="text-muted-foreground mb-6">
+                        下のボタンをクリックすると、メールクライアントが自動的に開きます。
+                      </p>
+                      <Button 
+                        onClick={handleContactClick}
+                        className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+                      >
+                        お問い合わせメールを作成
+                      </Button>
                     </div>
                   </div>
                 </div>
