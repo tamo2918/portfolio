@@ -121,25 +121,12 @@
   }
 }
 
-/* カスタムカーソルの設定 */
+/* カスタムカーソル設定 - 標準カーソルを表示したままリングのみを追加 */
 @media (min-width: 769px) {
-  /* デスクトップでのみカーソルを非表示 */
-  body {
-    cursor: none;
-  }
-  
-  /* 一般のクリック可能な要素 */
-  a, button, [role="button"], .hoverable {
-    cursor: none !important;
-  }
-  
-  /* フォーム要素では標準カーソルを使用 */
-  input, textarea, select, [contenteditable] {
-    cursor: text !important;
-  }
+  /* カーソル非表示設定を削除 - 通常のカーソルを表示する */
   
   /* 特殊操作のカーソル */
   [data-resizable], [data-draggable] {
-    cursor: move !important;
+    cursor: move;
   }
 }

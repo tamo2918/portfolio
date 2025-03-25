@@ -69,63 +69,34 @@ export function CursorTracker() {
   if (isMobile) return null;
 
   // テーマに基づいてカーソルの色を決定
-  // カラーの洗練化：より鮮明でありながらトーンダウンされた色
   const isDark = theme === 'dark';
-  const cursorColor = isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.65)';
-  const ringColor = isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)';
+  const ringColor = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.25)';
   
   // ホバー状態の色：プライマリカラーを使用
-  const hoverColor = isDark ? 'rgba(147, 51, 234, 0.85)' : 'rgba(79, 70, 229, 0.85)';
-  const hoverRingColor = isDark ? 'rgba(147, 51, 234, 0.3)' : 'rgba(79, 70, 229, 0.3)';
+  const hoverRingColor = isDark ? 'rgba(147, 51, 234, 0.4)' : 'rgba(79, 70, 229, 0.4)';
 
   return (
     <>
-      {/* 内側の円（メインカーソル） - サイズと動きを調整 */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full"
-        animate={{
-          x: mousePosition.x - 4,
-          y: mousePosition.y - 4,
-          scale: isHovering ? 0.8 : 1,
-          backgroundColor: isHovering ? hoverColor : cursorColor,
-        }}
-        transition={{
-          // より滑らかな動きのためのパラメータ調整
-          x: { type: "spring", stiffness: 1800, damping: 60, mass: 0.3 },
-          y: { type: "spring", stiffness: 1800, damping: 60, mass: 0.3 },
-          scale: { type: "spring", stiffness: 800, damping: 35 },
-          backgroundColor: { type: "tween", duration: 0.15 },
-        }}
-        style={{
-          width: "8px",
-          height: "8px",
-          boxShadow: isHovering 
-            ? `0 0 10px ${hoverColor}` 
-            : 'none',
-        }}
-      />
-
-      {/* 外側のリング（トラッカー） - より洗練された見た目に */}
+      {/* リングのみのトラッカー */}
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-[9998] rounded-full"
         animate={{
-          x: mousePosition.x - 20,
-          y: mousePosition.y - 20,
-          scale: isHovering ? 1.2 : 1,
+          x: mousePosition.x - 16,
+          y: mousePosition.y - 16,
+          scale: isHovering ? 1.3 : 1,
           borderColor: isHovering ? hoverRingColor : ringColor,
         }}
         transition={{
-          // より緩やかな追従
-          x: { type: "spring", stiffness: 120, damping: 26, mass: 0.6 },
-          y: { type: "spring", stiffness: 120, damping: 26, mass: 0.6 },
+          x: { type: "spring", stiffness: 300, damping: 28, mass: 0.5 },
+          y: { type: "spring", stiffness: 300, damping: 28, mass: 0.5 },
           scale: { type: "spring", stiffness: 200, damping: 22 },
           borderColor: { type: "tween", duration: 0.2 },
         }}
         style={{
-          width: "40px",
-          height: "40px",
-          border: `1px solid ${isHovering ? hoverRingColor : ringColor}`,
-          opacity: 0.9,
+          width: "32px",
+          height: "32px",
+          border: `1.5px solid ${isHovering ? hoverRingColor : ringColor}`,
+          opacity: 0.95,
         }}
       />
     </>
