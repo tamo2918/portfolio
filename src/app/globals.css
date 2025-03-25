@@ -120,3 +120,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* カスタムカーソルの設定 */
+@media (min-width: 769px) {
+  /* デスクトップでのみカーソルを非表示 */
+  body {
+    cursor: none;
+  }
+  
+  /* 一般のクリック可能な要素 */
+  a, button, [role="button"], .hoverable {
+    cursor: none !important;
+  }
+  
+  /* フォーム要素では標準カーソルを使用 */
+  input, textarea, select, [contenteditable] {
+    cursor: text !important;
+  }
+  
+  /* 特殊操作のカーソル */
+  [data-resizable], [data-draggable] {
+    cursor: move !important;
+  }
+}

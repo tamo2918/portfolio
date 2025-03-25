@@ -2,17 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 export function CursorTracker() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true); // デフォルトでモバイル判定にして、CSRで上書き
+  const { theme } = useTheme();
 
   useEffect(() => {
+    // クライアントサイドでのみ実行
     // モバイルデバイスの検出
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 768 || 
+                 /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     };
+    
+    // 初期位置を画面外に設定し、ちらつきを防止
+    setMousePosition({ x: -100, y: -100 });
     
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -21,79 +28,104 @@ export function CursorTracker() {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      // ホバー可能な要素にだけ反応するようにする
-      if ((e.target as HTMLElement).tagName === "A" || 
-          (e.target as HTMLElement).tagName === "BUTTON" ||
-          (e.target as HTMLElement).closest("a") ||
-          (e.target as HTMLElement).closest("button")) {
-        setIsHovering(true);
-      }
+    // シンプル化：マウスオーバー/アウトの処理を単純化
+    const handleMouseEnter = () => {
+      setIsHovering(true);
     };
 
-    const handleMouseOut = () => {
+    const handleMouseLeave = () => {
       setIsHovering(false);
     };
 
+    // 対象要素にイベントリスナーを追加
+    const addHoverListeners = () => {
+      const hoverElements = document.querySelectorAll('a, button, [role="button"], .hoverable');
+      
+      hoverElements.forEach(element => {
+        element.addEventListener('mouseenter', handleMouseEnter);
+        element.addEventListener('mouseleave', handleMouseLeave);
+      });
+      
+      return () => {
+        hoverElements.forEach(element => {
+          element.removeEventListener('mouseenter', handleMouseEnter);
+          element.removeEventListener('mouseleave', handleMouseLeave);
+        });
+      };
+    };
+
+    // イベントリスナーを追加
     window.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseover", handleMouseOver);
-    document.addEventListener("mouseout", handleMouseOut);
+    const removeHoverListeners = addHoverListeners();
 
     return () => {
       window.removeEventListener("resize", checkMobile);
       window.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseover", handleMouseOver);
-      document.removeEventListener("mouseout", handleMouseOut);
+      removeHoverListeners();
     };
   }, []);
 
   // モバイルデバイスではレンダリングしない
   if (isMobile) return null;
 
-  // カーソルがビューポートから出たら非表示にする
-  const isCursorVisible = mousePosition.x > 0 && mousePosition.y > 0;
+  // テーマに基づいてカーソルの色を決定
+  // カラーの洗練化：より鮮明でありながらトーンダウンされた色
+  const isDark = theme === 'dark';
+  const cursorColor = isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.65)';
+  const ringColor = isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)';
+  
+  // ホバー状態の色：プライマリカラーを使用
+  const hoverColor = isDark ? 'rgba(147, 51, 234, 0.85)' : 'rgba(79, 70, 229, 0.85)';
+  const hoverRingColor = isDark ? 'rgba(147, 51, 234, 0.3)' : 'rgba(79, 70, 229, 0.3)';
 
   return (
     <>
-      {/* 内側の円（メインカーソル） */}
+      {/* 内側の円（メインカーソル） - サイズと動きを調整 */}
       <motion.div
-        className="fixed pointer-events-none z-50 rounded-full bg-primary/30 mix-blend-difference"
+        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full"
         animate={{
-          x: mousePosition.x - 5,
-          y: mousePosition.y - 5,
-          scale: isHovering ? 0.5 : 1,
-          opacity: isCursorVisible ? 1 : 0,
+          x: mousePosition.x - 4,
+          y: mousePosition.y - 4,
+          scale: isHovering ? 0.8 : 1,
+          backgroundColor: isHovering ? hoverColor : cursorColor,
         }}
         transition={{
-          type: "spring",
-          stiffness: 500,
-          damping: 28,
-          mass: 0.5,
+          // より滑らかな動きのためのパラメータ調整
+          x: { type: "spring", stiffness: 1800, damping: 60, mass: 0.3 },
+          y: { type: "spring", stiffness: 1800, damping: 60, mass: 0.3 },
+          scale: { type: "spring", stiffness: 800, damping: 35 },
+          backgroundColor: { type: "tween", duration: 0.15 },
         }}
         style={{
-          width: "10px",
-          height: "10px",
+          width: "8px",
+          height: "8px",
+          boxShadow: isHovering 
+            ? `0 0 10px ${hoverColor}` 
+            : 'none',
         }}
       />
 
-      {/* 外側のリング（トラッカー） */}
+      {/* 外側のリング（トラッカー） - より洗練された見た目に */}
       <motion.div
-        className="fixed pointer-events-none z-50 rounded-full border-2 border-primary/30 mix-blend-difference"
+        className="fixed top-0 left-0 pointer-events-none z-[9998] rounded-full"
         animate={{
           x: mousePosition.x - 20,
           y: mousePosition.y - 20,
-          scale: isHovering ? 1.5 : 1,
-          opacity: isCursorVisible ? 1 : 0,
+          scale: isHovering ? 1.2 : 1,
+          borderColor: isHovering ? hoverRingColor : ringColor,
         }}
         transition={{
-          type: "spring",
-          stiffness: 250,
-          damping: 30,
-          mass: 1,
+          // より緩やかな追従
+          x: { type: "spring", stiffness: 120, damping: 26, mass: 0.6 },
+          y: { type: "spring", stiffness: 120, damping: 26, mass: 0.6 },
+          scale: { type: "spring", stiffness: 200, damping: 22 },
+          borderColor: { type: "tween", duration: 0.2 },
         }}
         style={{
           width: "40px",
           height: "40px",
+          border: `1px solid ${isHovering ? hoverRingColor : ringColor}`,
+          opacity: 0.9,
         }}
       />
     </>
